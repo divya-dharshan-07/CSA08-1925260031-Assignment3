@@ -1,5 +1,6 @@
 """Q6: Nested railway timetable and station index."""
 import random
+import sys
 import time
 from collections import defaultdict
 
@@ -89,9 +90,7 @@ def main():
     for train in sorted(result, key=lambda item: item[3]):
         print(train)
     print("Unknown station:", find_trains_indexed(timetable, index, "Atlantis", day))
-    print("Train 12603 on Monday (does not run):",
-          find_trains_indexed(timetable, index, "Madurai", "Mon")
-          if "Mon" in timetable["12603"]["days"] else [])
+    print("Does train 12603 run on Monday?:", "Mon" in timetable["12603"]["days"])
     print("Third stop departure of 12601:", timetable["12601"]["stops"][2][2])
     print("\nNeatly formatted timetable:")
     for train_no, details in timetable.items():
@@ -122,6 +121,7 @@ def main():
         indexed = find_trains_indexed(generated, generated_index, "Madurai", "Mon")
         index_time = time.perf_counter() - start
         print(f"trains={n:>5}: scan={plain_time:.6f}s, indexed={index_time:.6f}s, same={sorted(plain)==sorted(indexed)}")
+        print(f"  approximate index container bytes={index_storage_bytes}")
 
 
 if __name__ == "__main__":
