@@ -16,6 +16,8 @@ def main():
     print("bad :", bad)
     print("good:", good)
     print(bad[0] is bad[1], good[0] is good[1])
+    print("bad row ids:", [id(row) for row in bad])
+    print("good row ids:", [id(row) for row in good])
 
     stops = {
         (13.0827, 80.2707): "Chennai Central",
