@@ -38,8 +38,21 @@ def main():
         ("Sivaganga", "Fertiliser price is high"),
     ]
     for district, complaint in complaints:
-        by_district[district].append(complaint)
+        by_district.setdefault(district, []).append(complaint)
     print("Complaints by district:", dict(by_district))
+    print("District keys:", list(by_district.keys()))
+    print("District complaint groups:", list(by_district.values()))
+    print("District items:", list(by_district.items()))
+
+    by_crop = {}
+    crop_complaints = [
+        ("Paddy", "Leaves turning yellow"),
+        ("Cotton", "Pest attack reported"),
+        ("Paddy", "Seeds were delayed"),
+    ]
+    for crop, complaint in crop_complaints:
+        by_crop.setdefault(crop, []).append(complaint)
+    print("Complaints by crop:", by_crop)
 
     print("\nEdge cases:")
     print("Empty:", frequencies([""], STOP))
