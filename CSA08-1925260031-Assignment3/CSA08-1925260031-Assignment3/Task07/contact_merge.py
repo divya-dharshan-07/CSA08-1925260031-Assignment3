@@ -45,7 +45,15 @@ def merge_contacts(contacts):
             continue
 
         # Find existing groups for any shared normalised number.
-        existing = {groups[key] for key in keys if key in groups}
+        existing = []
+seen_groups = set()
+
+for key in keys:
+    if key in groups:
+        group = groups[key]
+        if id(group) not in seen_groups:
+            existing.append(group)
+            seen_groups.add(id(group))
         if existing:
             # Merge all previously separate groups into one canonical object.
             target = next(iter(existing))
