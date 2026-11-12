@@ -47,7 +47,7 @@ The running-sum method was faster in these runs, and both implementations matche
 
 ## Q2 – Tuples, mutability and copying
 
-A tuple is hashable when all its elements are hashable, so a coordinate tuple can be a dictionary key. A list is mutable and unhashable, so it cannot be a dictionary key.
+A tuple is hashable when all its elements are hashable, so a coordinate tuple can be a dictionary key. A list is mutable and unhashable, so it cannot be a dictionary key. The is operator checks object identity; id(obj) reports an identity value during that object's lifetime. In the bad grid, bad[0] is bad[1] is true and their id() values match. In the corrected grid, the row identity checks are false and the IDs differ.
 
 The expression [[0] * 3] * 3 creates multiple references to the same inner list. A list comprehension creates independent rows. Shallow copying creates a new outer container while sharing nested objects; deep copying recursively copies nested objects. Python passes object references to functions, so mutating a list parameter changes the same list observed by the caller.
 
@@ -64,7 +64,7 @@ Reported object sizes were 8,000,056 bytes for the list and 8,000,040 bytes for 
 
 ## Q3 – Dictionaries and complaint analysis
 
-The program tokenises complaint text, normalises case, removes punctuation and stop words, and counts terms with a dictionary. Dictionary lookup and insertion are average O(1), so counting all words is O(n) average. Repeatedly calling list.count for each of d distinct words costs O(n × d). Counter is a specialised frequency-counting tool. The top-word output is sorted by descending count and then alphabetically.
+The program tokenises complaint text, normalises case, removes punctuation and stop words, and counts terms with a dictionary using get(). District and crop groups use setdefault(key, []).append(value), which creates a list only when the key is absent. keys(), values() and items() return dynamic views of the dictionary's keys, values and key-value pairs. Dictionary lookup uses hashing and is average O(1), although worst-case collisions can degrade it. Python 3.7+ guarantees insertion order. Repeatedly calling list.count for each of d distinct words costs O(n × d); Counter is a specialised frequency-counting tool. The top-word output is sorted by descending count and then alphabetically.
 
 **Recorded benchmark results**
 
@@ -120,7 +120,7 @@ The measured list-comprehension object size was 120 bytes and the generator obje
 
 ## Q6 – Nested railway timetable and station index
 
-The outer dictionary maps train number to train details. Each detail dictionary stores the train name, a list of stops, and a set of running days. Each stop is a tuple containing station, arrival, and departure. A station index maps station names to candidate trains and makes repeated station queries faster.
+The outer dictionary maps train number to train details. Each detail dictionary stores the train name, a list of stops, and a set of running days. Each stop is a tuple containing station, arrival, and departure. A station index maps station names to candidate trains and makes repeated station queries faster. The program also tests whether train 12603 runs on Monday (it does not). The updated benchmark prints an approximate index-container memory value using sys.getsizeof() on the index dictionary and its station lists; this is a shallow estimate and excludes referenced tuple/string objects and allocator overhead. Record the values from the new run rather than assuming a result.
 
 A query without an index scans train records and their stops. The index uses additional memory but reduces search work for stations served by only a subset of trains. The third stop's departure for a train is accessed using timetable[train_no]["stops"][2][2].
 
@@ -141,7 +141,7 @@ The indexed search was faster in all three reported runs.
 
 ## Q7 – Contact merging
 
-The program uses normalised phone numbers as dictionary keys. It removes non-digits and strips a leading country code 91 for Indian 10-digit mobile numbers. Each grouped contact stores original phone formats and email addresses in sets, together with a display name. Contacts with no usable phone number are kept separately because the selected matching rule cannot safely identify them.
+The program uses normalised phone numbers as dictionary keys. It removes non-digits and strips a leading country code 91 only for 12-digit Indian numbers; only 10-digit results are accepted as match keys. Malformed lengths are rejected as match keys. Each grouped contact stores original phone formats and email addresses in sets, together with a display name. Contacts with no usable phone number are kept separately because the selected matching rule cannot safely identify them.
 
 **Algorithm**
 1. For each contact, normalise each phone number.
@@ -169,3 +169,76 @@ Dictionary grouping is efficient on average. Changed or missing phone numbers ca
 ## Final conclusion
 
 Python data structures should be selected according to the operations required: lists for ordered mutable sequences, tuples for fixed records, dictionaries for key-based lookup, and sets for unique membership and set algebra. The assignment demonstrated how data-structure choices affect clarity, execution time, and memory use. All benchmark values above are the values reported from the student's runs and may vary on other systems.
+
+## Additional rubric evidence and design diagrams
+
+### Q1 – Addition-count derivation and late data
+For n readings and a window width w = 7, the naive method recomputes each window using w additions: w(n−w+1) additions when n ≥ w. The running-sum method uses w−1 additions for the first window and, for each later window, one subtraction and one addition: (w−1)+2(n−w) arithmetic updates. Both are O(n) for fixed w, but the running sum reduces repeated work. list.insert(i, value) is O(n−i) because later elements shift; in the worst case it is O(n). A deque is useful for a moving stream, while a date-keyed dictionary is useful for direct date lookup but needs sorting or an ordered traversal for chronological calculations.
+
+### Q2 – Object identity diagrams
+Bad grid [[0] * 3] * 3:
+
+```text
+outer list
+  ├── row 0 ──┐
+  ├── row 1 ──┼──> the SAME inner list [0, 0, 0]
+  └── row 2 ──┘
+```
+
+Correct grid [[0 for _ in range(3)] for _ in range(3)]:
+
+```text
+outer list
+  ├──> row 0 [0, 0, 0]
+  ├──> row 1 [0, 0, 0]
+  └──> row 2 [0, 0, 0]
+       (three independent inner lists)
+```
+
+A tuple containing a list is not deeply immutable: the tuple cannot replace its element, but the referenced list can still be mutated.
+
+### Q3 – Dictionary views and crop grouping
+The updated program demonstrates setdefault() for district and crop grouping and prints keys(), values() and items() views. These views are dynamic: changes to the dictionary are reflected when the views are iterated. get(key, default) reads a value without raising KeyError; setdefault(key, default) returns the existing value or inserts the default if the key is absent.
+
+### Q4 – Venn diagram interpretation
+```text
+Elective A only     A ∩ B (both)     Elective B only
+     ( A )------------- overlap ------------( B )
+
+Exactly one = A-only ∪ B-only (symmetric difference)
+Both        = A ∩ B
+At least one= A ∪ B
+Neither     = Universe − (A ∪ B)
+```
+
+Converting a list to a set discards duplicate occurrences and does not preserve positional order. Tuples are set elements only when every item inside the tuple is hashable.
+
+### Q5 – Choosing comprehensions
+A comprehension is not always fastest. In the recorded run, the comprehension was fastest at 10,000 and 1,000,000 readings, while the loop was fastest at 100,000. The map/filter version was slower in these measurements. The best choice should balance readability, memory and measured workload rather than assuming one syntax always wins.
+
+### Q6 – Nested structure and query trade-off
+```text
+timetable
+  └── train number
+       ├── name
+       ├── stops: [(station, arrival, departure), ...]
+       └── days: {Mon, Tue, ...}
+
+station_index
+  └── station name -> [(train number, arrival, departure), ...]
+```
+
+The indexed query checks only trains listed for the requested station, then checks their running-day sets. The index costs additional memory and build time; it is beneficial when many station queries are made. The new source prints an approximate shallow container-size estimate; it must be executed again and its actual value added here before final submission.
+
+### Q7 – Measurable requirements, pairwise alternative and limitations
+Requirements for this example: merge records when they share at least one valid normalised phone key; retain every original phone representation; lowercase and deduplicate e-mail addresses; preserve records with no valid phone separately; produce deterministic sorted output; and produce 500 groups from the generated 1,000-record test and 50,000 groups from the 100,000-record test. The hand-checked example produces one Anu group, one Ravi group and two separate no-phone records.
+
+A pairwise alternative compares every contact with every other contact and unions matching groups. It requires O(n²) pair comparisons and up to O(n) auxiliary group storage (plus stored contact data). Dictionary indexing takes O(n) average expected processing time for a bounded number of phone keys per contact, with O(n) auxiliary storage for the index and groups. The dictionary method is preferable for large contact lists. It can still falsely merge two people who share a recycled phone number, and it cannot reliably merge records with no shared valid phone number; ambiguous matches should require human confirmation.
+
+## Final pre-submission actions
+- Re-run the updated Q3 and Q6 files and replace their screenshots with the new output.
+- Record Q6's printed approximate index-container memory value from that run in this report.
+- Re-run Q7 after the phone-validation change and refresh its screenshot.
+- Confirm the README run commands from the innermost assignment directory.
+- Add the repository URL to the assignment cover page.
+- The repository history contains separate screenshot uploads, but the original source files were initially added in a bulk upload. Do not claim that each task's source was committed progressively unless the faculty accepts the later task-specific commits as sufficient evidence.
