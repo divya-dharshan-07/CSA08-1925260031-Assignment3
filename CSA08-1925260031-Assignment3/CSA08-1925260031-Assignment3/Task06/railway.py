@@ -112,6 +112,9 @@ def main():
                 "days": {"Mon", "Wed", "Fri"},
             }
         generated_index = build_station_index(generated)
+        index_shallow_bytes = sys.getsizeof(generated_index)
+        index_entries = sum(sys.getsizeof(entries) for entries in generated_index.values())
+        index_storage_bytes = index_shallow_bytes + index_entries
         start = time.perf_counter()
         plain = find_trains(generated, "Madurai", "Mon")
         plain_time = time.perf_counter() - start
