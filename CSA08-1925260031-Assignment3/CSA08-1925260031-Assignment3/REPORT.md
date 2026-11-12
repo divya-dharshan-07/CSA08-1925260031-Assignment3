@@ -4,7 +4,7 @@
 **Register number:** 1925260031  
 **Repository:** CSA08-1925260031-Assignment3  
 **GitHub link:** https://github.com/divya-dharshan-07/CSA08-1925260031-Assignment3  
-**Python version:** To be confirmed. Run import sys; print(sys.version) in the same Python runtime used for the assignment.
+**Python version:** Python 3.13.7 (GCC 14.3.0; build dated August 14, 2025).
 
 ## Execution evidence
 
