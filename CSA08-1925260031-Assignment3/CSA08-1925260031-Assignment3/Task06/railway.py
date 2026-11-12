@@ -89,6 +89,9 @@ def main():
     for train in sorted(result, key=lambda item: item[3]):
         print(train)
     print("Unknown station:", find_trains_indexed(timetable, index, "Atlantis", day))
+    print("Train 12603 on Monday (does not run):",
+          find_trains_indexed(timetable, index, "Madurai", "Mon")
+          if "Mon" in timetable["12603"]["days"] else [])
     print("Third stop departure of 12601:", timetable["12601"]["stops"][2][2])
     print("\nNeatly formatted timetable:")
     for train_no, details in timetable.items():
