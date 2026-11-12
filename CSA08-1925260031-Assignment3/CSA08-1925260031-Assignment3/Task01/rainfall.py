@@ -53,22 +53,25 @@ def main():
     print("\nEdge cases:")
     print("Empty:", moving_average_running([]))
     print("Short:", moving_average_running([1, 2, 3, 4, 5, 6]))
-
+    
     print("\nBenchmark (seconds; actual values depend on your computer):")
     for n in (365, 36_500, 365_000):
         data = [random.random() * 40 for _ in range(n)]
+
         start = time.perf_counter()
         naive = moving_average_naive(data)
         naive_time = time.perf_counter() - start
+
         start = time.perf_counter()
         fast = moving_average_running(data)
         fast_time = time.perf_counter() - start
-        equal = all(
-    math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-9)
-    for a, b in zip(naive, fast)
-)
 
-print(f"n={n:>7}: naive={naive_time:.6f}, running={fast_time:.6f}, equal={equal}")
+        equal = all(
+            math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-9)
+            for a, b in zip(naive, fast)
+        )
+
+        print(f"n={n:>7}: naive={naive_time:.6f}, running={fast_time:.6f}, equal={equal}")
 
 
 if __name__ == "__main__":
