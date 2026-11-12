@@ -3,7 +3,7 @@
 **Repository name:** `CSA08-1925260031-Assignment3`  
 **Student:** Divya Dharshan  
 **Register number:** 1925260031  
-**Python:** Python 3.10+ (tested design uses only the standard library)
+**Python:** Python 3.13.7 (GCC 14.3.0; tested with the standard library only)
 
 ## Contents
 
@@ -21,7 +21,7 @@ Each task folder contains a runnable Python program and a `NOTES.md` with design
 
 ## How to run
 
-Open a terminal in this repository and run, for example:
+Open a terminal in this assignment folder (the folder containing `Task01` through `Task07`) and run, for example:
 
 ```bash
 python --version
@@ -42,13 +42,15 @@ All programs use Python standard-library modules only. No third-party installati
 
 ## GitHub submission checklist
 
-- [ ] Create a public repository named `CSA08-1925260031-Assignment3`, or a private repository with faculty added as collaborator.
-- [ ] Upload this extracted folder.
-- [ ] Run all seven programs on your computer.
-- [ ] Save terminal output screenshots inside the corresponding task folders (for example, `Task01/output.png`).
-- [ ] Add your measured timing and memory results to the report.
-- [ ] Commit progressively, with at least one meaningful commit per task.
-- [ ] Add the working GitHub URL to your report and assignment cover page.
+- [x] Public repository created with the required name.
+- [x] Seven task folders, source files, notes and output screenshots uploaded.
+- [x] All seven programs executed; outputs checked during guided testing.
+- [x] Report includes the GitHub URL, Python version and recorded timings.
+- [ ] Re-run Q3 and Q6 after the latest code updates and refresh their screenshots/measurements.
+- [ ] Add the latest Q6 approximate index-memory measurement to the report after running it.
+- [ ] Add the GitHub URL to the assignment cover page.
+
+**Folder note:** The task folders are currently inside `CSA08-1925260031-Assignment3/CSA08-1925260031-Assignment3/`. Open that innermost folder in VS Code before using the run commands above.
 
 ## Important academic note
 
