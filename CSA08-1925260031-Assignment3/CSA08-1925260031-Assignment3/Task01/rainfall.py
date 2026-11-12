@@ -1,6 +1,7 @@
 """Q1: Daily rainfall records – list slicing and moving averages."""
 import random
 import time
+import math
 
 
 def weekly_totals(readings):
@@ -62,7 +63,12 @@ def main():
         start = time.perf_counter()
         fast = moving_average_running(data)
         fast_time = time.perf_counter() - start
-        print(f"n={n:>7}: naive={naive_time:.6f}, running={fast_time:.6f}, equal={naive == fast}")
+        equal = all(
+    math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-9)
+    for a, b in zip(naive, fast)
+)
+
+print(f"n={n:>7}: naive={naive_time:.6f}, running={fast_time:.6f}, equal={equal}")
 
 
 if __name__ == "__main__":
