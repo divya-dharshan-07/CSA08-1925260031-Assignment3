@@ -16,7 +16,8 @@ def normalize_phone(raw):
     if len(digits) == 10:
         return digits
 
-    return digits if digits else None
+    # Reject malformed lengths instead of treating them as valid match keys.
+    return None
 
 
 def normalize_name(name):
